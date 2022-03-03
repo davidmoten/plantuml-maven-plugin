@@ -69,6 +69,7 @@ Defaults for the `<configuration>` element are:
 * **outputDirectory**: `target/generated-diagrams`
 * **configs**: none
 * **formats**: `png`
+* **metadata**: `true`
 
 ### Minimal plugin configuration
 
