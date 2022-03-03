@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.github.davidmoten</groupId>
+        <artifactId>plantuml-maven-plugin-parent</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>plantuml-maven-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
+    <name>${project.artifactId}</name>
+    <description>Generates UML diagrams using PlantUML syntax</description>
+    <dependencies>
+        <dependency>
+            <groupId>net.sourceforge.plantuml</groupId>
+            <artifactId>plantuml</artifactId>
+            <version>1.2022.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- dependencies to annotations -->
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>3.6.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-compat</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>2.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.6.4</version>
+                <executions>
+                    <execution>
+                        <id>default-descriptor</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                    <execution>
+                        <id>help-descriptor</id>
+                        <goals>
+                            <goal>helpmojo</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
