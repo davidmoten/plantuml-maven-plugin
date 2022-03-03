@@ -37,6 +37,9 @@ public final class GenerateMojo extends AbstractMojo {
 
     @Parameter(name = "formats")
     private List<String> formats;
+    
+    @Parameter(name = "metadata", defaultValue="true")
+    private boolean metadata;
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
@@ -70,13 +73,14 @@ public final class GenerateMojo extends AbstractMojo {
                 for (String format : formats) {
                     FileFormat fileFormat = FileFormat.valueOf(format.toUpperCase());
                     getLog().info("generating image from " + file);
+                    FileFormatOption option = new FileFormatOption(fileFormat, metadata);
                     final SourceFileReader reader = new SourceFileReader( //
                             Defines.createEmpty(), //
                             file, //
                             outputDirectory, //
                             configs, //
                             charset, //
-                            new FileFormatOption(fileFormat));
+                            option);
                     for (final GeneratedImage image : reader.getGeneratedImages()) {
                         getLog().info("image " + image + " written to " + image.getPngFile());
                     }

@@ -45,6 +45,7 @@
                                 <format>png</format>
                                 <format>svg</format>
                             </formats>
+                            <metadata>true</metadata>
                         </configuration>
                     </execution>
                     <execution>
