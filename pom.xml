@@ -22,6 +22,7 @@
         <maven.version>3.3.9</maven.version>
         <junit.version>4.13.2</junit.version>
         <bundle.plugin.version>5.1.4</bundle.plugin.version>
+        <scm.url>scm:git:https://github.com/davidmoten/plantuml-maven-plugin.git</scm.url>
     </properties>
     <developers>
         <developer>
@@ -30,10 +31,10 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git@github.com:davidmoten/plantuml-maven-plugin</connection>
-        <developerConnection>scm:git:git@github.com:davidmoten/plantuml-maven-plugin</developerConnection>
-        <url>scm:git:git@github.com:davidmoten/plantuml-maven-plugin</url>
-        <tag>HEAD</tag>
+        <connection>${scm.url}</connection>
+        <developerConnection>${scm.url}</developerConnection>
+        <url>${scm.url}</url>
+        <tag>0.1</tag>
     </scm>
     <modules>
         <module>plantuml-maven-plugin</module>
