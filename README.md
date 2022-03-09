@@ -46,8 +46,30 @@ To generate images from PlantUML source when you build your project add this to 
     </plugins>
 </build>
 ```
-### Configuration Files
+### PlantUML Config lines and files
 
+If for example you want to include `skin rose` at the start of every plantuml file while processing then you can specify 
+config lines or config files for that purpose.
+
+Here's how you include `skin rose` at the start of every plantuml file with config lines:
+
+```xml
+<configs>
+  <config>skin rose</config>
+</config>
+```
+
+Here's how you do the same using a config file rather than lines:
+```xml
+<configFiles>
+  <configFile>src/main/plantuml/global.config</configFile>
+</configFiles>
+```
+
+global.config:
+```
+skin rose
+```
 You can also include in the configuration a configs element with zero or more `config` children:
 
 ```xml
