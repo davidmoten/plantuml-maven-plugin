@@ -45,9 +45,9 @@
                                 <format>png</format>
                                 <format>svg</format>
                             </formats>
-                            <configs>
-                                <config>skin rose</config>
-                            </configs>
+                            <configFiles>
+                                <configFile>src/main/plantuml2/global.config</configFile>
+                            </configFiles>
                             <metadata>true</metadata>
                         </configuration>
                     </execution>

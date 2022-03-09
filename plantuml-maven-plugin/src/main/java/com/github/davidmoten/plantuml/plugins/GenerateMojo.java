@@ -2,6 +2,8 @@ package com.github.davidmoten.plantuml.plugins;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,10 +37,13 @@ public final class GenerateMojo extends AbstractMojo {
     @Parameter(name = "configs")
     private List<String> configs;
 
+    @Parameter(name = "configFiles")
+    private List<File> configFiles;
+
     @Parameter(name = "formats")
     private List<String> formats;
-    
-    @Parameter(name = "metadata", defaultValue="true")
+
+    @Parameter(name = "metadata", defaultValue = "true")
     private boolean metadata;
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
@@ -50,7 +55,7 @@ public final class GenerateMojo extends AbstractMojo {
             formats = Collections.singletonList("PNG");
         }
         if (configs == null) {
-            configs = Collections.emptyList();
+            configs = new ArrayList<>();
         }
         if (sources == null) {
             sources = new FileSet();
@@ -60,9 +65,13 @@ public final class GenerateMojo extends AbstractMojo {
                             + "main" + File.separator //
                             + "plantuml").getAbsolutePath());
         }
+        if (configFiles == null) {
+            configFiles = Collections.emptyList();
+        }
         getLog().info("sources=" + sources);
-        getLog().info("configs=" + configs);
         try {
+            addConfigFiles(configs, configFiles);
+            getLog().info("configs=" + configs);
             if (sources.getIncludes().isEmpty()) {
                 sources.addInclude("**/*.puml");
                 sources.addInclude("**/*.plantuml");
@@ -89,6 +98,17 @@ public final class GenerateMojo extends AbstractMojo {
             }
         } catch (IOException e) {
             throw new MojoExecutionException(e.getMessage());
+        }
+    }
+
+    private static void addConfigFiles(List<String> configs, List<File> configFiles) throws IOException {
+        for (File f : configFiles) {
+            Files.readAllLines(f.toPath()) //
+                    .stream() //
+                    .map(x -> x.trim()) //
+                    .filter(x -> !x.isEmpty()) //
+                    .peek(x -> configs.add(x)) //
+                    .count();
         }
     }
 
