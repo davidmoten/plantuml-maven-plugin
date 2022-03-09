@@ -51,8 +51,9 @@ To generate images from PlantUML source when you build your project add this to 
 If for example you want to include `skin rose` at the start of every plantuml file while processing then you can specify 
 config lines or config files for that purpose.
 
-Here's how you include `skin rose` at the start of every plantuml file with config lines:
+Here's how you include `skin rose` at the start of every plantuml file with config lines.
 
+This fragment goes in the maven plugin `<configuration>` section as above:
 ```xml
 <configs>
   <config>skin rose</config>
@@ -70,15 +71,6 @@ global.config:
 ```
 skin rose
 ```
-You can also include in the configuration a configs element with zero or more `config` children:
-
-```xml
-<configs>
-  <config>${basedir}/src/main/plantuml/global.config</config>
-</config>
-```
-
-As per the PlantUML Configuration File documentation this is a way of inserting a block of plantuml commands at the start of each plantuml text (like skinning for instance to get a consistent look).
 
 ### Configuration defaults
 
