@@ -46,7 +46,7 @@
                                 <format>svg</format>
                             </formats>
                             <configs>
-                                <config>global.config</config>
+                                <config>skin rose</config>
                             </configs>
                             <metadata>true</metadata>
                         </configuration>
