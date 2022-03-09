@@ -45,6 +45,9 @@
                                 <format>png</format>
                                 <format>svg</format>
                             </formats>
+                            <configs>
+                                <config>global.config</config>
+                            </configs>
                             <metadata>true</metadata>
                         </configuration>
                     </execution>

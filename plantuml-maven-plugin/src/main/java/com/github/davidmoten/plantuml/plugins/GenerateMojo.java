@@ -61,6 +61,7 @@ public final class GenerateMojo extends AbstractMojo {
                             + "plantuml").getAbsolutePath());
         }
         getLog().info("sources=" + sources);
+        getLog().info("configs=" + configs);
         try {
             if (sources.getIncludes().isEmpty()) {
                 sources.addInclude("**/*.puml");
