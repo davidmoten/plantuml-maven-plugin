@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.davidmoten</groupId>
         <artifactId>plantuml-maven-plugin-parent</artifactId>
-        <version>0.1.5-SNAPSHOT</version>
+        <version>0.1.5</version>
     </parent>
     <artifactId>plantuml-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
