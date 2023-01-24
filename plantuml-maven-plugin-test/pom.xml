@@ -58,6 +58,29 @@
                             <goal>generate</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>generate-diagrams-preserve</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <directory>${basedir}/src/main/plantuml3</directory>
+                                <includes>
+                                    <include>**/*.puml</include>
+                                </includes>
+                                <excludes>
+                                    <exclude>**/ignore-me.puml</exclude>
+                                </excludes>
+                            </sources>
+                            <preserveDirectoryStructure>true</preserveDirectoryStructure>
+                            <formats>
+                                <format>png</format>
+                            </formats>
+                            <metadata>true</metadata>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
