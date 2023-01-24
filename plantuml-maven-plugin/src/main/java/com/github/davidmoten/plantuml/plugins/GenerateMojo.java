@@ -3,6 +3,8 @@ package com.github.davidmoten.plantuml.plugins;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +50,9 @@ public final class GenerateMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
+    
+    @Parameter(defaultValue = "false")
+    private boolean preserveDirectoryStructure;
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -84,10 +89,19 @@ public final class GenerateMojo extends AbstractMojo {
                     FileFormat fileFormat = FileFormat.valueOf(format.toUpperCase());
                     getLog().info("generating image from " + file);
                     FileFormatOption option = new FileFormatOption(fileFormat, metadata);
+                    final File outDir;
+                    if (preserveDirectoryStructure) {
+                        Path rel = Paths.get(sources.getDirectory()).relativize(file.getParentFile().toPath());
+                        getLog().info("relative output path=" + rel);
+                        outDir = Paths.get(outputDirectory.getAbsolutePath(), rel.toString()).toFile();
+                    } else {
+                        outDir = outputDirectory;
+                    }
+                    getLog().info("output directory=" + outDir);
                     final SourceFileReader reader = new SourceFileReader( //
                             Defines.createEmpty(), //
                             file, //
-                            outputDirectory, //
+                            outDir, //
                             configs, //
                             charset, //
                             option);

@@ -14,5 +14,11 @@ public class GenerateTest {
         assertTrue(new File("target/generated-diagrams/two.png").exists());
         assertTrue(new File("target/generated-diagrams/two.svg").exists());
     }
+    
+    @Test
+    public void testPreserveDirectoryStructure() {
+        assertTrue(new File("target/generated-diagrams/one/one.png").exists());
+        assertTrue(new File("target/generated-diagrams/two/two.png").exists());
+    }
 
 }
