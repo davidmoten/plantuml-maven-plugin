@@ -39,6 +39,7 @@ To generate images from PlantUML source when you build your project add this to 
                             <format>png</format>
                             <format>svg</format>
                         </formats>
+                        <preserveDirectoryStructure>false</preserveDirectoryStructure>
                     </configuration>
                 </execution>
             </executions>
@@ -84,6 +85,7 @@ Defaults for the `<configuration>` element are:
 * **configs**: none
 * **formats**: `png`
 * **metadata**: `true`
+* **preserveDirectoryStructure**: `false`
 
 ### Minimal plugin configuration
 
