@@ -24,7 +24,7 @@ import net.sourceforge.plantuml.GeneratedImage;
 import net.sourceforge.plantuml.SourceFileReader;
 import net.sourceforge.plantuml.preproc.Defines;
 
-@Mojo(name = "generate")
+@Mojo(name = "generate", threadSafe = true)
 public final class GenerateMojo extends AbstractMojo {
 
     @Parameter(name = "sources")
