@@ -7,7 +7,7 @@
         <version>0.1</version>
     </parent>
     <artifactId>plantuml-maven-plugin-parent</artifactId>
-    <version>0.2.5-SNAPSHOT</version>
+    <version>0.2.6</version>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <inceptionYear>2022</inceptionYear>
@@ -32,7 +32,7 @@
         <connection>${scm.url}</connection>
         <developerConnection>${scm.url}</developerConnection>
         <url>${scm.url}</url>
-        <tag>0.1</tag>
+        <tag>0.2.6</tag>
     </scm>
     <modules>
         <module>plantuml-maven-plugin</module>
