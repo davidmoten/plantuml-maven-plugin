@@ -82,7 +82,12 @@ public final class GenerateMojo extends AbstractMojo {
                 sources.addInclude("**/*.plantuml");
                 sources.addInclude("**/*.txt");
             }
-            List<File> files = FileUtils.getFiles(new File(sources.getDirectory()),
+            File sourcesDirectory = new File(sources.getDirectory());
+            if (!sourcesDirectory.exists()) {
+                getLog().info("sources directory does not exist");
+                return;
+            }
+            List<File> files = FileUtils.getFiles(sourcesDirectory,
                     commaSeparate(sources.getIncludes()), commaSeparate(sources.getExcludes()));
             for (File file : files) {
                 for (String format : formats) {
