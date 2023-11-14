@@ -8,6 +8,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.maven.model.FileSet;
@@ -89,33 +92,38 @@ public final class GenerateMojo extends AbstractMojo {
             }
             List<File> files = FileUtils.getFiles(sourcesDirectory,
                     commaSeparate(sources.getIncludes()), commaSeparate(sources.getExcludes()));
+            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
             for (File file : files) {
                 for (String format : formats) {
-                    FileFormat fileFormat = FileFormat.valueOf(format.toUpperCase());
-                    getLog().info("generating image from " + file);
-                    FileFormatOption option = new FileFormatOption(fileFormat, metadata);
-                    final File outDir;
-                    if (preserveDirectoryStructure) {
-                        Path rel = Paths.get(sources.getDirectory()).relativize(file.getParentFile().toPath());
-                        getLog().info("relative output path=" + rel);
-                        outDir = Paths.get(outputDirectory.getAbsolutePath(), rel.toString()).toFile();
-                    } else {
-                        outDir = outputDirectory;
-                    }
-                    getLog().info("output directory=" + outDir);
-                    final SourceFileReader reader = new SourceFileReader( //
-                            Defines.createEmpty(), //
-                            file, //
-                            outDir, //
-                            configs, //
-                            charset, //
-                            option);
-                    for (final GeneratedImage image : reader.getGeneratedImages()) {
-                        getLog().info("image " + image + " written to " + image.getPngFile());
-                    }
+                    executor.submit(() -> {
+                        FileFormat fileFormat = FileFormat.valueOf(format.toUpperCase());
+                        getLog().info("generating image from " + file);
+                        FileFormatOption option = new FileFormatOption(fileFormat, metadata);
+                        final File outDir;
+                        if (preserveDirectoryStructure) {
+                            Path rel = Paths.get(sources.getDirectory()).relativize(file.getParentFile().toPath());
+                            getLog().info("relative output path=" + rel);
+                            outDir = Paths.get(outputDirectory.getAbsolutePath(), rel.toString()).toFile();
+                        } else {
+                            outDir = outputDirectory;
+                        }
+                        final SourceFileReader reader = new SourceFileReader( //
+                                Defines.createEmpty(), //
+                                file, //
+                                outDir, //
+                                configs, //
+                                charset, //
+                                option);
+                        for (final GeneratedImage image : reader.getGeneratedImages()) {
+                            getLog().info("image " + image + " written to " + image.getPngFile());
+                        }
+                        return null;
+                    });
                 }
             }
-        } catch (IOException e) {
+            executor.shutdown();
+            executor.awaitTermination(10L, TimeUnit.MINUTES);
+        } catch (IOException | InterruptedException e) {
             throw new MojoExecutionException(e.getMessage());
         }
     }
