@@ -92,7 +92,7 @@ public final class GenerateMojo extends AbstractMojo {
             }
             List<File> files = FileUtils.getFiles(sourcesDirectory,
                     commaSeparate(sources.getIncludes()), commaSeparate(sources.getExcludes()));
-            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            ExecutorService executor = Executors.newWorkStealingPool();
             for (File file : files) {
                 for (String format : formats) {
                     executor.submit(() -> {
