@@ -2,6 +2,7 @@ package com.github.davidmoten.plantuml.plugins;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -93,6 +94,8 @@ public final class GenerateMojo extends AbstractMojo {
             List<File> files = FileUtils.getFiles(sourcesDirectory,
                     commaSeparate(sources.getIncludes()), commaSeparate(sources.getExcludes()));
             ExecutorService executor = Executors.newWorkStealingPool();
+            List<Path> relativePaths = new ArrayList<>();
+            String firstFormat = formats.isEmpty() ? null : formats.get(0);
             for (File file : files) {
                 for (String format : formats) {
                     executor.submit(() -> {
@@ -116,6 +119,9 @@ public final class GenerateMojo extends AbstractMojo {
                                 option);
                         for (final GeneratedImage image : reader.getGeneratedImages()) {
                             getLog().info("image " + image + " written to " + image.getPngFile());
+                            if (firstFormat.equals(format)) {
+                                relativePaths.add(outputDirectory.toPath().relativize(image.getPngFile().toPath()));
+                            }
                         }
                         return null;
                     });
@@ -123,8 +129,24 @@ public final class GenerateMojo extends AbstractMojo {
             }
             executor.shutdown();
             executor.awaitTermination(10L, TimeUnit.MINUTES);
+            File index = new File(outputDirectory, "index.md");
+            StringBuilder b = new StringBuilder();
+            relativePaths.forEach(path -> {
+                b.append("<h4>" + removeExtension(path.toString()) + "</h4>\n");
+                b.append("<img src=" + path + "\">\n\n");
+            });
+            Files.write(index.toPath(), b.toString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException | InterruptedException e) {
             throw new MojoExecutionException(e.getMessage());
+        }
+    }
+
+    private static String removeExtension(String s) {
+        int i = s.lastIndexOf(".");
+        if (i == -1) {
+            return s;
+        } else {
+            return s.substring(0, i);
         }
     }
 
