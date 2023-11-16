@@ -131,9 +131,11 @@ public final class GenerateMojo extends AbstractMojo {
             executor.awaitTermination(10L, TimeUnit.MINUTES);
             File index = new File(outputDirectory, "index.md");
             StringBuilder b = new StringBuilder();
+            relativePaths.sort((x, y) -> x.toString().compareTo(y.toString()));
             relativePaths.forEach(path -> {
-                b.append("<h4>" + removeExtension(path.toString()) + "</h4>\n");
-                b.append("<img src=" + path + "\">\n\n");
+                String name = removeExtension(path.toString());
+                b.append("### " + name + "\n");
+                b.append("![" + name + "](" + path + ")\n\n");
             });
             Files.write(index.toPath(), b.toString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException | InterruptedException e) {
