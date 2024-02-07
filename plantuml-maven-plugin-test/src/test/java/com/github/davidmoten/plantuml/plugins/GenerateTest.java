@@ -1,5 +1,6 @@
 package com.github.davidmoten.plantuml.plugins;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -16,9 +17,11 @@ public class GenerateTest {
     }
     
     @Test
-    public void testPreserveDirectoryStructure() {
-        assertTrue(new File("target/generated-diagrams/one/one.png").exists());
-        assertTrue(new File("target/generated-diagrams/two/two.png").exists());
+    public void testPreserveDirectoryStructureAndOutputSvgOnly() {
+        assertTrue(new File("target/generated-diagrams/three/three.svg").exists());
+        assertTrue(new File("target/generated-diagrams/four/four.svg").exists());
+        assertFalse(new File("target/generated-diagrams/three/three.png").exists());
+        assertFalse(new File("target/generated-diagrams/four/four.png").exists());
     }
 
 }

@@ -76,7 +76,7 @@
                             </sources>
                             <preserveDirectoryStructure>true</preserveDirectoryStructure>
                             <formats>
-                                <format>png</format>
+                                <format>svg</format>
                             </formats>
                             <metadata>true</metadata>
                         </configuration>
