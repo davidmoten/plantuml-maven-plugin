@@ -13,12 +13,13 @@ import net.sourceforge.plantuml.preproc.Defines;
 
 public class SourceFileReaderExt extends SourceFileReader {
 
-	public SourceFileReaderExt(Defines defines, File file, File outputDirectory, List<String> config, String charset,
-			FileFormatOption fileFormatOption) throws IOException {
-		super(defines, file, outputDirectory, config, charset, fileFormatOption);
-	}
+    public SourceFileReaderExt(Defines defines, File file, File outputDirectory, List<String> config, String charset,
+            FileFormatOption fileFormatOption) throws IOException {
+        super(defines, file, outputDirectory, config, charset, fileFormatOption);
+    }
 
-	public SuggestedFile extractSuggestedFile(BlockUml blockUml) throws FileNotFoundException {
-		return getSuggestedFile(blockUml);
-	}
+    public SuggestedFile extractSuggestedFile(BlockUml blockUml) throws FileNotFoundException {
+        return getSuggestedFile(blockUml);
+    }
+
 }

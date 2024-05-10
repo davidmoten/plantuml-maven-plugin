@@ -49,7 +49,7 @@
                                 <configFile>src/main/plantuml2/global.config</configFile>
                             </configFiles>
                             <metadata>true</metadata>
-							<storePreproc>true</storePreproc>
+                            <writePreproc>true</writePreproc>
                         </configuration>
                     </execution>
                     <execution>
