@@ -14,6 +14,7 @@ public class GenerateTest {
         assertTrue(new File("target/generated-diagrams/one.png").exists());
         assertTrue(new File("target/generated-diagrams/two.png").exists());
         assertTrue(new File("target/generated-diagrams/two.svg").exists());
+        assertTrue(new File("target/generated-diagrams/two_001.preproc").exists());
     }
     
     @Test

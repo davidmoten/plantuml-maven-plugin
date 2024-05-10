@@ -85,6 +85,7 @@ Defaults for the `<configuration>` element are:
 * **configs**: none
 * **formats**: `png`
 * **metadata**: `true`
+* **writePreproc**: `false`
 * **preserveDirectoryStructure**: `false`
 
 ### Minimal plugin configuration
