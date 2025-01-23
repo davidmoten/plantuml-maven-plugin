@@ -63,9 +63,16 @@ public final class GenerateMojo extends AbstractMojo {
     
     @Parameter(defaultValue = "false")
     private boolean preserveDirectoryStructure;
+    
+    @Parameter(defaultValue = "false")
+    private boolean skip;
 
     @Override
     public void execute() throws MojoExecutionException {
+        if (skip) {
+            getLog().info("skipping execution");
+            return;
+        }
         if (formats == null) {
             formats = Collections.singletonList("PNG");
         }
