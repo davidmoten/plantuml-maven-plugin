@@ -87,6 +87,7 @@ Defaults for the `<configuration>` element are:
 * **metadata**: `true`
 * **writePreproc**: `false`
 * **preserveDirectoryStructure**: `false`
+* **skip**: `false`
 
 ### Minimal plugin configuration
 
