@@ -146,6 +146,7 @@ public final class GenerateMojo extends AbstractMojo {
                 b.append("### " + name + "\n");
                 b.append("![" + name + "](" + path + ")\n\n");
             });
+            index.getParentFile().mkdirs();
             Files.write(index.toPath(), b.toString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException | InterruptedException e) {
             throw new MojoExecutionException(e.getMessage());
