@@ -24,25 +24,25 @@ To generate images from PlantUML source when you build your project add this to 
                     <goals>
                         <goal>generate</goal>
                     </goals>
-                    <configuration>
-                        <sources>
-                            <directory>${basedir}/src/main/plantuml</directory>
-                            <includes>
-                                <include>**/*.puml</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/ignore-me.puml</exclude>
-                            </excludes>
-                        </sources>
-                        <outputDirectory>${project.build.directory}/generated-diagrams</outputDirectory>
-                        <formats>
-                            <format>png</format>
-                            <format>svg</format>
-                        </formats>
-                        <preserveDirectoryStructure>false</preserveDirectoryStructure>
-                    </configuration>
                 </execution>
             </executions>
+            <configuration>
+                <sources>
+                    <directory>${basedir}/src/main/plantuml</directory>
+                    <includes>
+                        <include>**/*.puml</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/ignore-me.puml</exclude>
+                    </excludes>
+                </sources>
+                <outputDirectory>${project.build.directory}/generated-diagrams</outputDirectory>
+                <formats>
+                    <format>png</format>
+                    <format>svg</format>
+                </formats>
+                <preserveDirectoryStructure>false</preserveDirectoryStructure>
+            </configuration>
         </plugin>
     </plugins>
 </build>
