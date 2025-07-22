@@ -42,6 +42,7 @@ To generate images from PlantUML source when you build your project add this to 
                     <format>svg</format>
                 </formats>
                 <preserveDirectoryStructure>false</preserveDirectoryStructure>
+                <generateMarkdownIndex>true</generateMarkdownIndex>
             </configuration>
         </plugin>
     </plugins>
@@ -88,6 +89,7 @@ Defaults for the `<configuration>` element are:
 * **writePreproc**: `false`
 * **preserveDirectoryStructure**: `false`
 * **skip**: `false`
+* **generateMarkdownIndex**: `true`
 
 ### Minimal plugin configuration
 

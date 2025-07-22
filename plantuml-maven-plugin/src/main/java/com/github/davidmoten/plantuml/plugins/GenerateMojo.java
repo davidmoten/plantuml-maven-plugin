@@ -66,7 +66,10 @@ public final class GenerateMojo extends AbstractMojo {
     
     @Parameter(defaultValue = "false")
     private boolean skip;
-
+    
+    @Parameter(defaultValue = "true")
+    private boolean generateMarkdownIndex;
+    
     @Override
     public void execute() throws MojoExecutionException {
         if (skip) {
@@ -145,16 +148,18 @@ public final class GenerateMojo extends AbstractMojo {
             }
             executor.shutdown();
             executor.awaitTermination(10L, TimeUnit.MINUTES);
-            File index = new File(outputDirectory, "index.md");
-            StringBuilder b = new StringBuilder();
-            relativePaths.sort((x, y) -> x.toString().compareTo(y.toString()));
-            relativePaths.forEach(path -> {
-                String name = removeExtension(path.toString());
-                b.append("### " + name + "\n");
-                b.append("![" + name + "](" + path + ")\n\n");
-            });
-            index.getParentFile().mkdirs();
-            Files.write(index.toPath(), b.toString().getBytes(StandardCharsets.UTF_8));
+            if (generateMarkdownIndex) {
+                File index = new File(outputDirectory, "index.md");
+                StringBuilder b = new StringBuilder();
+                relativePaths.sort((x, y) -> x.toString().compareTo(y.toString()));
+                relativePaths.forEach(path -> {
+                    String name = removeExtension(path.toString());
+                    b.append("### " + name + "\n");
+                    b.append("![" + name + "](" + path + ")\n\n");
+                });
+                index.getParentFile().mkdirs();
+                Files.write(index.toPath(), b.toString().getBytes(StandardCharsets.UTF_8));
+            }
         } catch (IOException | InterruptedException e) {
             throw new MojoExecutionException(e.getMessage());
         }
