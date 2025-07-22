@@ -1,0 +1,2279 @@
+@startuml
+hide <<Path>> circle
+hide <<Response>> circle
+hide <<Parameter>> circle
+hide empty methods
+hide empty fields
+skinparam class {
+BackgroundColor<<Path>> Wheat
+}
+set namespaceSeparator none
+
+class "Wallet.additional_signers" {
+  {field} signer_id : string
+}
+
+class "Wallet" {
+  {field} id : string
+  {field} address : string
+  {field} public_key : string {O}
+  {field} created_at : decimal
+  {field} chain_type : string
+  {field} policy_ids : string[]
+  {field} owner_id : string {O}
+}
+
+class "User" {
+  {field} id : string
+  {field} linked_accounts : string[]
+  {field} mfa_methods : string[]
+  {field} created_at : decimal
+  {field} has_accepted_terms : boolean
+  {field} is_guest : boolean
+  {field} custom_metadata : string -> string
+}
+
+class "Policy.rules" {
+  {field} name : string
+  {field} method : string
+  {field} conditions : string[]
+  {field} action : string
+  {field} id : string
+}
+
+class "Policy" {
+  {field} version : string
+  {field} name : string
+  {field} chain_type : string
+  {field} id : string
+  {field} owner_id : string
+  {field} created_at : decimal
+}
+
+class "Transaction" {
+  {field} caip2 : string
+  {field} transaction_hash : string
+  {field} status : string
+  {field} created_at : decimal
+  {field} id : string
+  {field} wallet_id : string
+}
+
+class "KeyQuorum.authorization_keys" {
+  {field} public_key : string
+  {field} display_name : string
+}
+
+class "KeyQuorum" {
+  {field} id : string
+  {field} display_name : string {O}
+  {field} authorization_threshold : decimal {O}
+}
+
+class "Offramp.deposit_instructions" {
+  {field} amount : string
+  {field} currency : string
+  {field} chain : string
+  {field} to_address : string
+  {field} from_address : string
+}
+
+class "Offramp" {
+  {field} id : string
+  {field} status : string
+}
+
+class "Onramp.deposit_instructions" {
+  {field} amount : string
+  {field} currency : string
+  {field} payment_rail : string
+  {field} deposit_message : string {O}
+  {field} bank_name : string {O}
+  {field} bank_account_number : string {O}
+  {field} bank_routing_number : string {O}
+  {field} bank_beneficiary_name : string {O}
+  {field} bank_beneficiary_address : string {O}
+  {field} bank_address : string {O}
+  {field} iban : string {O}
+  {field} bic : string {O}
+  {field} account_holder_name : string {O}
+}
+
+class "Onramp" {
+  {field} id : string
+  {field} status : string
+}
+
+class "KycStatus" {
+  {field} user_id : string
+  {field} provider_user_id : string {O}
+  {field} status : string
+}
+
+class "GET /v1/wallets" <<Path>>  {
+  {field} cursor : string {O}
+  {field} limit : decimal {O}
+  {field} chain_type : string {O}
+  {field} privy-app-id : string
+}
+
+class "GET /v1/wallets 200" <<Response>>  {
+  {field} next_cursor : string {O}
+}
+
+class "POST /v1/wallets" <<Path>>  {
+  {field} privy-app-id : string
+  {field} privy-authorization-signature : string {O}
+}
+
+class "POST /v1/wallets 200" {
+}
+
+class "POST /v1/wallets 200" <<Response>>  {
+}
+
+class "POST /v1/wallets Request.owner" <<RequestBody>>  {
+  {field} public_key : string
+}
+
+class "POST /v1/wallets Request.additional_signers" {
+  {field} signer_id : string
+  {field} override_policy_ids : string[]
+}
+
+class "POST /v1/wallets Request" <<RequestBody>>  {
+  {field} chain_type : string
+  {field} policy_ids : string[] {O}
+  {field} owner_id : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc" <<Path>>  {
+  {field} wallet_id : string
+  {field} privy-app-id : string
+  {field} privy-authorization-signature : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.data" {
+  {field} signed_transaction : string
+  {field} encoding : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200" {
+  {field} method : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.1.data" {
+  {field} transaction_id : string {O}
+  {field} hash : string
+  {field} caip2 : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.1.error" {
+  {field} code : string
+  {field} message : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.1" {
+  {field} method : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.2.data" {
+  {field} signature : string
+  {field} encoding : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.2" {
+  {field} method : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.3.data" {
+  {field} signed_transaction : string
+  {field} encoding : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.3" {
+  {field} method : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.chain_id" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.chain_id.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.nonce" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.nonce.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.value" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.value.1" {
+  {field} value : integer
+}
+
+enum "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.type" {
+  0
+}
+
+enum "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.type.1" {
+  1
+}
+
+enum "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.type.2" {
+  2
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.gas_limit" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.gas_limit.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.gas_price" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.gas_price.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.max_fee_per_gas" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.max_fee_per_gas.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.max_priority_fee_per_gas" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.max_priority_fee_per_gas.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request" {
+  {field} from : string {O}
+  {field} to : string {O}
+  {field} data : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.data" {
+  {field} transaction_id : string {O}
+  {field} hash : string
+  {field} caip2 : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4.error" {
+  {field} code : string
+  {field} message : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.4" {
+  {field} method : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.5.data" {
+  {field} signature : string
+  {field} encoding : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.5" {
+  {field} method : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.6.data" {
+  {field} signature : string
+  {field} encoding : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.6" {
+  {field} method : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.7.data" {
+  {field} signature : string
+  {field} encoding : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200.7" {
+  {field} method : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc 200" <<Response>>  {
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.chain_id" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.chain_id.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.nonce" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.nonce.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.value" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.value.1" {
+  {field} value : integer
+}
+
+enum "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.type" {
+  0
+}
+
+enum "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.type.1" {
+  1
+}
+
+enum "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.type.2" {
+  2
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.gas_limit" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.gas_limit.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.gas_price" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.gas_price.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.max_fee_per_gas" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.max_fee_per_gas.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.max_priority_fee_per_gas" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.max_priority_fee_per_gas.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction" {
+  {field} from : string {O}
+  {field} to : string {O}
+  {field} data : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.params" {
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request" {
+  {field} method : string
+  {field} address : string {O}
+  {field} chain_type : string {O}
+  {field} wallet_id : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.chain_id" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.chain_id.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.nonce" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.nonce.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.value" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.value.1" {
+  {field} value : integer
+}
+
+enum "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.type" {
+  0
+}
+
+enum "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.type.1" {
+  1
+}
+
+enum "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.type.2" {
+  2
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.gas_limit" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.gas_limit.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.gas_price" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.gas_price.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.max_fee_per_gas" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.max_fee_per_gas.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.max_priority_fee_per_gas" {
+  {field} value : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.max_priority_fee_per_gas.1" {
+  {field} value : integer
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction" {
+  {field} from : string {O}
+  {field} to : string {O}
+  {field} data : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1.params" {
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.1" {
+  {field} method : string
+  {field} caip2 : string
+  {field} address : string {O}
+  {field} chain_type : string {O}
+  {field} wallet_id : string {O}
+}
+
+enum "POST /v1/wallets/{wallet_id}/rpc Request.2.params.encoding" {
+  utf-8
+}
+
+enum "POST /v1/wallets/{wallet_id}/rpc Request.2.params.encoding.1" {
+  hex
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.2.params" {
+  {field} message : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.2" {
+  {field} method : string
+  {field} address : string {O}
+  {field} chain_type : string {O}
+  {field} wallet_id : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.3.params.typed_data" {
+  {field} domain : string -> string
+  {field} types : string -> string
+  {field} message : string -> string
+  {field} primary_type : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.3.params" {
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.3" {
+  {field} method : string
+  {field} address : string {O}
+  {field} chain_type : string {O}
+  {field} wallet_id : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.4.params" {
+  {field} hash : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.4" {
+  {field} method : string
+  {field} address : string {O}
+  {field} chain_type : string {O}
+  {field} wallet_id : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.5.params" {
+  {field} transaction : string
+  {field} encoding : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.5" {
+  {field} method : string
+  {field} address : string {O}
+  {field} chain_type : string {O}
+  {field} wallet_id : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.6.params" {
+  {field} transaction : string
+  {field} encoding : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.6" {
+  {field} method : string
+  {field} caip2 : string
+  {field} address : string {O}
+  {field} chain_type : string {O}
+  {field} wallet_id : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.7.params" {
+  {field} message : string
+  {field} encoding : string
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request.7" {
+  {field} method : string
+  {field} address : string {O}
+  {field} chain_type : string {O}
+  {field} wallet_id : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/rpc Request" <<RequestBody>>  {
+}
+
+class "GET /v1/wallets/{wallet_id}" <<Path>>  {
+  {field} wallet_id : string
+  {field} privy-app-id : string
+}
+
+class "GET /v1/wallets/{wallet_id} 200" {
+}
+
+class "GET /v1/wallets/{wallet_id} 200" <<Response>>  {
+}
+
+class "PATCH /v1/wallets/{wallet_id}" <<Path>>  {
+  {field} wallet_id : string
+  {field} privy-app-id : string
+  {field} privy-authorization-signature : string {O}
+}
+
+class "PATCH /v1/wallets/{wallet_id} 200" {
+}
+
+class "PATCH /v1/wallets/{wallet_id} 200" <<Response>>  {
+}
+
+class "PATCH /v1/wallets/{wallet_id} Request.owner" <<RequestBody>>  {
+  {field} public_key : string
+}
+
+class "PATCH /v1/wallets/{wallet_id} Request.additional_signers" {
+  {field} signer_id : string
+  {field} override_policy_ids : string[]
+}
+
+class "PATCH /v1/wallets/{wallet_id} Request" <<RequestBody>>  {
+  {field} policy_ids : string[] {O}
+  {field} owner_id : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/raw_sign" <<Path>>  {
+  {field} wallet_id : string
+  {field} privy-app-id : string
+  {field} privy-authorization-signature : string {O}
+}
+
+class "POST /v1/wallets/{wallet_id}/raw_sign 200.data" <<Response>>  {
+  {field} signature : string
+  {field} encoding : string
+}
+
+class "POST /v1/wallets/{wallet_id}/raw_sign 200.error" <<Response>>  {
+  {field} code : string
+  {field} message : string
+}
+
+class "POST /v1/wallets/{wallet_id}/raw_sign 200" <<Response>>  {
+}
+
+class "POST /v1/wallets/{wallet_id}/raw_sign Request" <<RequestBody>>  {
+}
+
+class "GET /v1/wallets/{wallet_id}/balance" <<Path>>  {
+  {field} wallet_id : string
+  {field} asset : string
+  {field} chain : string
+  {field} include_currency : string {O}
+  {field} privy-app-id : string
+}
+
+class "GET /v1/wallets/{wallet_id}/balance 200.balances" {
+  {field} chain : string
+  {field} asset : string
+  {field} raw_value : string
+  {field} raw_value_decimals : decimal
+  {field} display_values : string -> string
+}
+
+class "GET /v1/wallets/{wallet_id}/balance 200" <<Response>>  {
+}
+
+class "GET /v1/wallets/{wallet_id}/transactions" <<Path>>  {
+  {field} wallet_id : string
+  {field} cursor : string {O}
+  {field} limit : decimal {O}
+  {field} chain : string
+  {field} asset : string
+  {field} privy-app-id : string
+}
+
+class "GET /v1/wallets/{wallet_id}/transactions 200.transactions.details" {
+  {field} type : string
+  {field} sender : string
+  {field} sender_privy_user_id : string
+  {field} recipient : string
+  {field} recipient_privy_user_id : string
+  {field} chain : string
+  {field} asset : string
+  {field} raw_value : string
+  {field} raw_value_decimals : decimal
+  {field} display_values : string -> string
+}
+
+class "GET /v1/wallets/{wallet_id}/transactions 200.transactions.details.1" {
+  {field} type : string
+  {field} sender : string
+  {field} sender_privy_user_id : string
+  {field} recipient : string
+  {field} recipient_privy_user_id : string
+  {field} chain : string
+  {field} asset : string
+  {field} raw_value : string
+  {field} raw_value_decimals : decimal
+  {field} display_values : string -> string
+}
+
+enum "GET /v1/wallets/{wallet_id}/transactions 200.transactions.details.2" {
+  null
+}
+
+class "GET /v1/wallets/{wallet_id}/transactions 200.transactions" {
+  {field} caip2 : string
+  {field} transaction_hash : string
+  {field} status : string
+  {field} created_at : decimal
+  {field} privy_transaction_id : string
+  {field} wallet_id : string
+}
+
+class "GET /v1/wallets/{wallet_id}/transactions 200" <<Response>>  {
+  {field} next_cursor : string
+}
+
+class "GET /v1/users" <<Path>>  {
+  {field} cursor : string {O}
+  {field} limit : decimal {O}
+  {field} privy-app-id : string
+}
+
+class "GET /v1/users 200" <<Response>>  {
+  {field} next_cursor : string {O}
+}
+
+class "POST /v1/users" <<Path>>  {
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users 200" {
+}
+
+class "POST /v1/users 200" <<Response>>  {
+}
+
+class "POST /v1/users Request" <<RequestBody>>  {
+  {field} create_n_ethereum_wallets : decimal {O}
+  {field} create_ethereum_wallet : boolean {O}
+  {field} create_solana_wallet : boolean {O}
+  {field} create_ethereum_smart_wallet : boolean {O}
+  {field} linked_accounts : string[]
+  {field} custom_metadata : string -> string
+}
+
+class "GET /v1/users/{user_id}" <<Path>>  {
+  {field} user_id : string
+  {field} privy-app-id : string
+}
+
+class "GET /v1/users/{user_id} 200" {
+}
+
+class "GET /v1/users/{user_id} 200" <<Response>>  {
+}
+
+class "DELETE /v1/users/{user_id}" <<Path>>  {
+  {field} user_id : string
+  {field} privy-app-id : string
+}
+
+enum "DELETE /v1/users/{user_id} 204 text/html" <<Response>> {
+  204 No Content
+}
+
+enum "DELETE /v1/users/{user_id} 404 text/html" <<Response>> {
+  User not found
+}
+
+class "POST /v1/users/{user_id}/custom_metadata" <<Path>>  {
+  {field} user_id : string
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users/{user_id}/custom_metadata 200" <<Response>>  {
+  {field} custom_metadata : string -> string
+}
+
+class "POST /v1/users/email/address" <<Path>>  {
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users/email/address Request" <<RequestBody>>  {
+  {field} address : string
+}
+
+class "POST /v1/users/custom_auth/id" <<Path>>  {
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users/custom_auth/id Request" <<RequestBody>>  {
+  {field} custom_user_id : string
+}
+
+class "POST /v1/users/wallet/address" <<Path>>  {
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users/wallet/address Request.address" {
+  {field} value : string
+}
+
+class "POST /v1/users/wallet/address Request.address.1" {
+  {field} value : string
+}
+
+class "POST /v1/users/wallet/address Request" <<RequestBody>>  {
+}
+
+class "POST /v1/users/{user_id}/wallets" <<Path>>  {
+  {field} user_id : string
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users/{user_id}/wallets 200" {
+}
+
+class "POST /v1/users/{user_id}/wallets 200" <<Response>>  {
+}
+
+class "POST /v1/users/{user_id}/wallets Request.wallets.additional_signers" {
+  {field} signer_id : string
+  {field} override_policy_ids : string[] {O}
+}
+
+enum "POST /v1/users/{user_id}/wallets Request.wallets.chain_type" {
+  cosmos
+}
+
+enum "POST /v1/users/{user_id}/wallets Request.wallets.chain_type.1" {
+  stellar
+}
+
+enum "POST /v1/users/{user_id}/wallets Request.wallets.chain_type.2" {
+  sui
+}
+
+enum "POST /v1/users/{user_id}/wallets Request.wallets.chain_type.3" {
+  solana
+}
+
+enum "POST /v1/users/{user_id}/wallets Request.wallets.chain_type.4" {
+  ethereum
+}
+
+class "POST /v1/users/{user_id}/wallets Request.wallets" {
+  {field} policy_ids : string[] {O}
+  {field} create_smart_wallet : boolean {O}
+}
+
+class "POST /v1/users/{user_id}/wallets Request" <<RequestBody>>  {
+  {field} create_direct_signer : boolean {O}
+}
+
+class "POST /v1/policies" <<Path>>  {
+  {field} privy-app-id : string
+  {field} privy-authorization-signature : string {O}
+}
+
+class "POST /v1/policies 200" {
+}
+
+class "POST /v1/policies 200" <<Response>>  {
+}
+
+class "POST /v1/policies Request.rules" {
+  {field} name : string
+  {field} method : string
+  {field} conditions : string[]
+  {field} action : string
+}
+
+class "POST /v1/policies Request.owner" <<RequestBody>>  {
+  {field} public_key : string
+}
+
+class "POST /v1/policies Request" <<RequestBody>>  {
+  {field} version : string
+  {field} name : string
+  {field} chain_type : string
+  {field} owner_id : string {O}
+}
+
+class "GET /v1/policies/{policy_id}" <<Path>>  {
+  {field} policy_id : string
+  {field} privy-app-id : string
+}
+
+class "GET /v1/policies/{policy_id} 200" {
+}
+
+class "GET /v1/policies/{policy_id} 200" <<Response>>  {
+}
+
+class "DELETE /v1/policies/{policy_id}" <<Path>>  {
+  {field} policy_id : string
+  {field} privy-app-id : string
+  {field} privy-authorization-signature : string {O}
+}
+
+class "PATCH /v1/policies/{policy_id}" <<Path>>  {
+  {field} policy_id : string
+  {field} privy-app-id : string
+  {field} privy-authorization-signature : string {O}
+}
+
+class "PATCH /v1/policies/{policy_id} 200" {
+}
+
+class "PATCH /v1/policies/{policy_id} 200" <<Response>>  {
+}
+
+class "PATCH /v1/policies/{policy_id} Request.rules" {
+  {field} name : string
+  {field} method : string
+  {field} conditions : string[]
+  {field} action : string
+}
+
+class "PATCH /v1/policies/{policy_id} Request.owner" <<RequestBody>>  {
+  {field} public_key : string
+}
+
+class "PATCH /v1/policies/{policy_id} Request" <<RequestBody>>  {
+  {field} name : string {O}
+  {field} owner_id : string {O}
+}
+
+class "POST /v1/policies/{policy_id}/rules" <<Path>>  {
+  {field} policy_id : string
+  {field} privy-app-id : string
+  {field} privy-authorization-signature : string {O}
+}
+
+class "POST /v1/policies/{policy_id}/rules 200" <<Response>>  {
+  {field} name : string
+  {field} method : string
+  {field} conditions : string[]
+  {field} action : string
+  {field} id : string
+}
+
+class "POST /v1/policies/{policy_id}/rules Request" <<RequestBody>>  {
+  {field} name : string
+  {field} method : string
+  {field} conditions : string[]
+  {field} action : string
+}
+
+class "GET /v1/transactions/{transaction_id}" <<Path>>  {
+  {field} transaction_id : string
+  {field} privy-app-id : string
+}
+
+class "GET /v1/transactions/{transaction_id} 200" {
+}
+
+class "GET /v1/transactions/{transaction_id} 200" <<Response>>  {
+}
+
+class "GET /v1/key_quorums/{key_quorum_id}" <<Path>>  {
+  {field} key_quorum_id : string
+  {field} privy-app-id : string
+}
+
+class "GET /v1/key_quorums/{key_quorum_id} 200" {
+}
+
+class "GET /v1/key_quorums/{key_quorum_id} 200" <<Response>>  {
+}
+
+class "DELETE /v1/key_quorums/{key_quorum_id}" <<Path>>  {
+  {field} key_quorum_id : string
+  {field} privy-app-id : string
+  {field} privy-authorization-signature : string {O}
+}
+
+class "PATCH /v1/key_quorums/{key_quorum_id}" <<Path>>  {
+  {field} key_quorum_id : string
+  {field} privy-app-id : string
+  {field} privy-authorization-signature : string {O}
+}
+
+class "PATCH /v1/key_quorums/{key_quorum_id} 200" {
+}
+
+class "PATCH /v1/key_quorums/{key_quorum_id} 200" <<Response>>  {
+}
+
+class "PATCH /v1/key_quorums/{key_quorum_id} Request" <<RequestBody>>  {
+  {field} public_keys : string[]
+  {field} authorization_threshold : decimal {O}
+  {field} display_name : string {O}
+}
+
+class "POST /v1/key_quorums" <<Path>>  {
+  {field} privy-app-id : string
+}
+
+class "POST /v1/key_quorums 200" {
+}
+
+class "POST /v1/key_quorums 200" <<Response>>  {
+}
+
+class "POST /v1/key_quorums Request" <<RequestBody>>  {
+  {field} public_keys : string[]
+  {field} authorization_threshold : decimal {O}
+  {field} display_name : string {O}
+}
+
+class "POST /v1/wallets_with_recovery" <<Path>>  {
+  {field} privy-app-id : string
+}
+
+class "POST /v1/wallets_with_recovery 200" <<Response>>  {
+  {field} recovery_user_id : string
+}
+
+class "POST /v1/wallets_with_recovery Request.wallets" {
+  {field} chain_type : string
+  {field} policy_ids : string[] {O}
+}
+
+class "POST /v1/wallets_with_recovery Request.primary_signer" <<RequestBody>>  {
+  {field} subject_id : string
+}
+
+class "POST /v1/wallets_with_recovery Request.recovery_user" <<RequestBody>>  {
+  {field} linked_accounts : string[]
+}
+
+class "POST /v1/wallets_with_recovery Request" <<RequestBody>>  {
+}
+
+class "POST /v1/user_signers/authenticate" <<Path>>  {
+  {field} privy-app-id : string
+}
+
+class "POST /v1/user_signers/authenticate 200.encrypted_authorization_key" {
+  {field} encryption_type : string
+  {field} encapsulated_key : string
+  {field} ciphertext : string
+}
+
+class "POST /v1/user_signers/authenticate 200" {
+  {field} expires_at : decimal
+}
+
+class "POST /v1/user_signers/authenticate 200.1" {
+  {field} authorization_key : string
+  {field} expires_at : decimal
+}
+
+class "POST /v1/user_signers/authenticate 200" <<Response>>  {
+}
+
+class "POST /v1/user_signers/authenticate Request" <<RequestBody>>  {
+  {field} user_jwt : string
+  {field} encryption_type : string {O}
+  {field} recipient_public_key : string {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/status" <<Path>>  {
+  {field} user_id : string
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users/{user_id}/fiat/status 200" <<Response>>  {
+  {field} transactions : string[]
+}
+
+class "POST /v1/users/{user_id}/fiat/status Request" <<RequestBody>>  {
+  {field} provider : string
+}
+
+class "POST /v1/users/{user_id}/fiat/tos" <<Path>>  {
+  {field} user_id : string
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users/{user_id}/fiat/tos 200" {
+  {field} status : string
+}
+
+class "POST /v1/users/{user_id}/fiat/tos 200.1" {
+  {field} status : string
+  {field} url : string
+}
+
+class "POST /v1/users/{user_id}/fiat/tos 200" <<Response>>  {
+}
+
+class "POST /v1/users/{user_id}/fiat/tos Request" <<RequestBody>>  {
+  {field} provider : string
+}
+
+class "GET /v1/users/{user_id}/fiat/kyc" <<Path>>  {
+  {field} user_id : string
+  {field} provider : string
+  {field} privy-app-id : string
+}
+
+class "GET /v1/users/{user_id}/fiat/kyc 200" <<Response>>  {
+  {field} user_id : string
+  {field} provider_user_id : string {O}
+  {field} status : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc" <<Path>>  {
+  {field} user_id : string
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc 200" <<Response>>  {
+  {field} user_id : string
+  {field} provider_user_id : string {O}
+  {field} status : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.data.residential_address" {
+  {field} street_line_1 : string
+  {field} street_line_2 : string {O}
+  {field} city : string
+  {field} subdivision : string
+  {field} postal_code : string {O}
+  {field} country : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.data.identifying_information" {
+  {field} type : string
+  {field} issuing_country : string
+  {field} number : string {O}
+  {field} description : string {O}
+  {field} expiration : string {O}
+  {field} image_front : string {O}
+  {field} image_back : string {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.data.ofac_screen" {
+  {field} screened_at : string
+  {field} result : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.data.kyc_screen" {
+  {field} screened_at : string
+  {field} result : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.data.transliterated_residential_address" {
+  {field} street_line_1 : string
+  {field} street_line_2 : string {O}
+  {field} city : string
+  {field} subdivision : string
+  {field} postal_code : string {O}
+  {field} country : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.data.documents" {
+  {field} purposes : string[]
+  {field} file : string
+  {field} description : string {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.data" {
+  {field} type : string
+  {field} first_name : string
+  {field} last_name : string
+  {field} email : string
+  {field} birth_date : string
+  {field} signed_agreement_id : string {O}
+  {field} middle_name : string {O}
+  {field} transliterated_first_name : string {O}
+  {field} transliterated_middle_name : string {O}
+  {field} transliterated_last_name : string {O}
+  {field} phone : string {O}
+  {field} endorsements : string[] {O}
+  {field} account_purpose : string {O}
+  {field} account_purpose_other : string {O}
+  {field} employment_status : string {O}
+  {field} expected_monthly_payments_usd : string {O}
+  {field} acting_as_intermediary : string {O}
+  {field} most_recent_occupation : string {O}
+  {field} source_of_funds : string {O}
+  {field} nationality : string {O}
+  {field} verified_selfie_at : string {O}
+  {field} completed_customer_safety_check_at : string {O}
+  {field} has_signed_terms_of_service : boolean {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request" {
+  {field} provider : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.1.data.residential_address" {
+  {field} street_line_1 : string
+  {field} street_line_2 : string {O}
+  {field} city : string
+  {field} subdivision : string
+  {field} postal_code : string {O}
+  {field} country : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.1.data.identifying_information" {
+  {field} type : string
+  {field} issuing_country : string
+  {field} number : string {O}
+  {field} description : string {O}
+  {field} expiration : string {O}
+  {field} image_front : string {O}
+  {field} image_back : string {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.1.data.ofac_screen" {
+  {field} screened_at : string
+  {field} result : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.1.data.kyc_screen" {
+  {field} screened_at : string
+  {field} result : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.1.data.transliterated_residential_address" {
+  {field} street_line_1 : string
+  {field} street_line_2 : string {O}
+  {field} city : string
+  {field} subdivision : string
+  {field} postal_code : string {O}
+  {field} country : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.1.data.documents" {
+  {field} purposes : string[]
+  {field} file : string
+  {field} description : string {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.1.data" {
+  {field} type : string
+  {field} first_name : string
+  {field} last_name : string
+  {field} email : string
+  {field} birth_date : string
+  {field} signed_agreement_id : string {O}
+  {field} middle_name : string {O}
+  {field} transliterated_first_name : string {O}
+  {field} transliterated_middle_name : string {O}
+  {field} transliterated_last_name : string {O}
+  {field} phone : string {O}
+  {field} endorsements : string[] {O}
+  {field} account_purpose : string {O}
+  {field} account_purpose_other : string {O}
+  {field} employment_status : string {O}
+  {field} expected_monthly_payments_usd : string {O}
+  {field} acting_as_intermediary : string {O}
+  {field} most_recent_occupation : string {O}
+  {field} source_of_funds : string {O}
+  {field} nationality : string {O}
+  {field} verified_selfie_at : string {O}
+  {field} completed_customer_safety_check_at : string {O}
+  {field} has_signed_terms_of_service : boolean {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request.1" {
+  {field} provider : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc Request" <<RequestBody>>  {
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc" <<Path>>  {
+  {field} user_id : string
+  {field} privy-app-id : string
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc 200" <<Response>>  {
+  {field} user_id : string
+  {field} provider_user_id : string {O}
+  {field} status : string
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.data.residential_address" {
+  {field} street_line_1 : string
+  {field} street_line_2 : string {O}
+  {field} city : string
+  {field} subdivision : string
+  {field} postal_code : string {O}
+  {field} country : string
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.data.identifying_information" {
+  {field} type : string
+  {field} issuing_country : string
+  {field} number : string {O}
+  {field} description : string {O}
+  {field} expiration : string {O}
+  {field} image_front : string {O}
+  {field} image_back : string {O}
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.data.ofac_screen" {
+  {field} screened_at : string
+  {field} result : string
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.data.kyc_screen" {
+  {field} screened_at : string
+  {field} result : string
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.data.transliterated_residential_address" {
+  {field} street_line_1 : string
+  {field} street_line_2 : string {O}
+  {field} city : string
+  {field} subdivision : string
+  {field} postal_code : string {O}
+  {field} country : string
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.data.documents" {
+  {field} purposes : string[]
+  {field} file : string
+  {field} description : string {O}
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.data" {
+  {field} type : string
+  {field} first_name : string
+  {field} last_name : string
+  {field} email : string
+  {field} birth_date : string
+  {field} signed_agreement_id : string {O}
+  {field} middle_name : string {O}
+  {field} transliterated_first_name : string {O}
+  {field} transliterated_middle_name : string {O}
+  {field} transliterated_last_name : string {O}
+  {field} phone : string {O}
+  {field} endorsements : string[] {O}
+  {field} account_purpose : string {O}
+  {field} account_purpose_other : string {O}
+  {field} employment_status : string {O}
+  {field} expected_monthly_payments_usd : string {O}
+  {field} acting_as_intermediary : string {O}
+  {field} most_recent_occupation : string {O}
+  {field} source_of_funds : string {O}
+  {field} nationality : string {O}
+  {field} verified_selfie_at : string {O}
+  {field} completed_customer_safety_check_at : string {O}
+  {field} has_signed_terms_of_service : boolean {O}
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request" {
+  {field} provider : string
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data.residential_address" {
+  {field} street_line_1 : string
+  {field} street_line_2 : string {O}
+  {field} city : string
+  {field} subdivision : string
+  {field} postal_code : string {O}
+  {field} country : string
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data.identifying_information" {
+  {field} type : string
+  {field} issuing_country : string
+  {field} number : string {O}
+  {field} description : string {O}
+  {field} expiration : string {O}
+  {field} image_front : string {O}
+  {field} image_back : string {O}
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data.ofac_screen" {
+  {field} screened_at : string
+  {field} result : string
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data.kyc_screen" {
+  {field} screened_at : string
+  {field} result : string
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data.transliterated_residential_address" {
+  {field} street_line_1 : string
+  {field} street_line_2 : string {O}
+  {field} city : string
+  {field} subdivision : string
+  {field} postal_code : string {O}
+  {field} country : string
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data.documents" {
+  {field} purposes : string[]
+  {field} file : string
+  {field} description : string {O}
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data" {
+  {field} type : string
+  {field} first_name : string
+  {field} last_name : string
+  {field} email : string
+  {field} birth_date : string
+  {field} signed_agreement_id : string {O}
+  {field} middle_name : string {O}
+  {field} transliterated_first_name : string {O}
+  {field} transliterated_middle_name : string {O}
+  {field} transliterated_last_name : string {O}
+  {field} phone : string {O}
+  {field} endorsements : string[] {O}
+  {field} account_purpose : string {O}
+  {field} account_purpose_other : string {O}
+  {field} employment_status : string {O}
+  {field} expected_monthly_payments_usd : string {O}
+  {field} acting_as_intermediary : string {O}
+  {field} most_recent_occupation : string {O}
+  {field} source_of_funds : string {O}
+  {field} nationality : string {O}
+  {field} verified_selfie_at : string {O}
+  {field} completed_customer_safety_check_at : string {O}
+  {field} has_signed_terms_of_service : boolean {O}
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request.1" {
+  {field} provider : string
+}
+
+class "PATCH /v1/users/{user_id}/fiat/kyc Request" <<RequestBody>>  {
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc_link" <<Path>>  {
+  {field} user_id : string
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc_link 200.rejection_reasons" {
+  {field} developer_reason : string
+  {field} reason : string
+  {field} created_at : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc_link 200" <<Response>>  {
+  {field} id : string
+  {field} customer_id : string
+  {field} full_name : string
+  {field} email : string
+  {field} kyc_link : string
+  {field} kyc_status : string
+  {field} tos_link : string
+  {field} tos_status : string
+  {field} persona_inquiry_type : string {O}
+  {field} created_at : string
+}
+
+class "POST /v1/users/{user_id}/fiat/kyc_link Request" <<RequestBody>>  {
+  {field} provider : string
+  {field} full_name : string {O}
+  {field} email : string
+  {field} type : string {O}
+  {field} endorsements : string[] {O}
+  {field} redirect_uri : string {O}
+}
+
+class "GET /v1/users/{user_id}/fiat/accounts" <<Path>>  {
+  {field} user_id : string
+  {field} provider : string
+  {field} privy-app-id : string
+}
+
+class "GET /v1/users/{user_id}/fiat/accounts 200.accounts" {
+  {field} id : string
+  {field} bank_name : string {O}
+  {field} currency : string
+  {field} account_type : string
+  {field} last_4 : string {O}
+}
+
+class "GET /v1/users/{user_id}/fiat/accounts 200" <<Response>>  {
+}
+
+class "POST /v1/users/{user_id}/fiat/accounts" <<Path>>  {
+  {field} user_id : string
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users/{user_id}/fiat/accounts 200" <<Response>>  {
+  {field} id : string
+  {field} bank_name : string {O}
+  {field} currency : string
+  {field} account_type : string
+  {field} last_4 : string {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/accounts Request.iban" <<RequestBody>>  {
+  {field} account_number : string
+  {field} bic : string
+  {field} country : string
+}
+
+class "POST /v1/users/{user_id}/fiat/accounts Request.account" <<RequestBody>>  {
+  {field} account_number : string
+  {field} routing_number : string
+  {field} checking_or_savings : string {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/accounts Request.swift.address" <<RequestBody>>  {
+  {field} street_line_1 : string
+  {field} street_line_2 : string {O}
+  {field} city : string
+  {field} postal_code : string {O}
+  {field} country : string
+  {field} state : string {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/accounts Request.swift.account" <<RequestBody>>  {
+  {field} account_number : string
+  {field} bic : string
+  {field} country : string
+}
+
+class "POST /v1/users/{user_id}/fiat/accounts Request.swift" <<RequestBody>>  {
+  {field} category : string
+  {field} purpose_of_funds : string[]
+  {field} short_business_description : string
+}
+
+class "POST /v1/users/{user_id}/fiat/accounts Request.address" <<RequestBody>>  {
+  {field} street_line_1 : string
+  {field} street_line_2 : string {O}
+  {field} city : string
+  {field} postal_code : string {O}
+  {field} country : string
+  {field} state : string {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/accounts Request" <<RequestBody>>  {
+  {field} provider : string
+  {field} account_owner_name : string
+  {field} bank_name : string {O}
+  {field} currency : string
+  {field} first_name : string {O}
+  {field} last_name : string {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/offramp" <<Path>>  {
+  {field} user_id : string
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users/{user_id}/fiat/offramp 200.deposit_instructions" <<Response>>  {
+  {field} amount : string
+  {field} currency : string
+  {field} chain : string
+  {field} to_address : string
+  {field} from_address : string
+}
+
+class "POST /v1/users/{user_id}/fiat/offramp 200" <<Response>>  {
+  {field} id : string
+  {field} status : string
+}
+
+class "POST /v1/users/{user_id}/fiat/offramp Request.source" <<RequestBody>>  {
+  {field} currency : string
+  {field} chain : string
+  {field} from_address : string
+}
+
+class "POST /v1/users/{user_id}/fiat/offramp Request.destination" <<RequestBody>>  {
+  {field} currency : string
+  {field} payment_rail : string
+  {field} external_account_id : string
+}
+
+class "POST /v1/users/{user_id}/fiat/offramp Request" <<RequestBody>>  {
+  {field} amount : string
+  {field} provider : string
+}
+
+class "POST /v1/users/{user_id}/fiat/onramp" <<Path>>  {
+  {field} user_id : string
+  {field} privy-app-id : string
+}
+
+class "POST /v1/users/{user_id}/fiat/onramp 200.deposit_instructions" <<Response>>  {
+  {field} amount : string
+  {field} currency : string
+  {field} payment_rail : string
+  {field} deposit_message : string {O}
+  {field} bank_name : string {O}
+  {field} bank_account_number : string {O}
+  {field} bank_routing_number : string {O}
+  {field} bank_beneficiary_name : string {O}
+  {field} bank_beneficiary_address : string {O}
+  {field} bank_address : string {O}
+  {field} iban : string {O}
+  {field} bic : string {O}
+  {field} account_holder_name : string {O}
+}
+
+class "POST /v1/users/{user_id}/fiat/onramp 200" <<Response>>  {
+  {field} id : string
+  {field} status : string
+}
+
+class "POST /v1/users/{user_id}/fiat/onramp Request.source" <<RequestBody>>  {
+  {field} payment_rail : string
+  {field} currency : string
+}
+
+class "POST /v1/users/{user_id}/fiat/onramp Request.destination" <<RequestBody>>  {
+  {field} chain : string
+  {field} currency : string
+  {field} to_address : string
+}
+
+class "POST /v1/users/{user_id}/fiat/onramp Request" <<RequestBody>>  {
+  {field} amount : string
+  {field} provider : string
+}
+
+class "POST /v1/apps/{app_id}/fiat" <<Path>>  {
+  {field} app_id : string
+  {field} privy-app-id : string
+}
+
+class "POST /v1/apps/{app_id}/fiat 200" <<Response>>  {
+  {field} success : boolean
+}
+
+class "POST /v1/apps/{app_id}/fiat Request" <<RequestBody>>  {
+  {field} provider : string
+  {field} api_key : string
+}
+
+"Wallet" --> "*" "Wallet.additional_signers"  :  "additional_signers"
+
+"Policy" --> "*" "Policy.rules"  :  "rules"
+
+"KeyQuorum" --> "*" "KeyQuorum.authorization_keys"  :  "authorization_keys"
+
+"Offramp" *--> "1" "Offramp.deposit_instructions"  :  "deposit_instructions"
+
+"Onramp" *--> "1" "Onramp.deposit_instructions"  :  "deposit_instructions"
+
+"GET /v1/wallets 200" --> "*" "Wallet"  :  "data"
+
+"GET /v1/wallets" ..> "1" "GET /v1/wallets 200"  :  "200"
+
+"POST /v1/wallets 200" --> "1" "Wallet"
+
+"POST /v1/wallets 200" --> "1" "POST /v1/wallets 200"
+
+"POST /v1/wallets" ..> "1" "POST /v1/wallets 200"  :  "200"
+
+"POST /v1/wallets Request" *--> "0..1" "POST /v1/wallets Request.owner"  :  "owner"
+
+"POST /v1/wallets Request" --> "*" "POST /v1/wallets Request.additional_signers"  :  "additional_signers"
+
+"POST /v1/wallets" --> "1" "POST /v1/wallets Request"
+
+"POST /v1/wallets/{wallet_id}/rpc 200" *--> "1" "POST /v1/wallets/{wallet_id}/rpc 200.data"  :  "data"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.1" *--> "0..1" "POST /v1/wallets/{wallet_id}/rpc 200.1.data"  :  "data"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.1" *--> "0..1" "POST /v1/wallets/{wallet_id}/rpc 200.1.error"  :  "error"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.2" *--> "1" "POST /v1/wallets/{wallet_id}/rpc 200.2.data"  :  "data"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.3" *--> "1" "POST /v1/wallets/{wallet_id}/rpc 200.3.data"  :  "data"
+
+diamond anon1
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request" -->"0..1" "anon1" : "chain_id"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.chain_id" --|> "anon1"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.chain_id.1" --|> "anon1"
+
+diamond anon2
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request" -->"0..1" "anon2" : "nonce"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.nonce" --|> "anon2"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.nonce.1" --|> "anon2"
+
+diamond anon3
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request" -->"0..1" "anon3" : "value"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.value" --|> "anon3"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.value.1" --|> "anon3"
+
+diamond anon4
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request" -->"0..1" "anon4" : "type"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.type" --|> "anon4"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.type.1" --|> "anon4"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.type.2" --|> "anon4"
+
+diamond anon5
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request" -->"0..1" "anon5" : "gas_limit"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.gas_limit" --|> "anon5"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.gas_limit.1" --|> "anon5"
+
+diamond anon6
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request" -->"0..1" "anon6" : "gas_price"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.gas_price" --|> "anon6"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.gas_price.1" --|> "anon6"
+
+diamond anon7
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request" -->"0..1" "anon7" : "max_fee_per_gas"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.max_fee_per_gas" --|> "anon7"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.max_fee_per_gas.1" --|> "anon7"
+
+diamond anon8
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request" -->"0..1" "anon8" : "max_priority_fee_per_gas"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.max_priority_fee_per_gas" --|> "anon8"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request.max_priority_fee_per_gas.1" --|> "anon8"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4.data" *--> "0..1" "POST /v1/wallets/{wallet_id}/rpc 200.4.data.transaction_request"  :  "transaction_request"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4" *--> "0..1" "POST /v1/wallets/{wallet_id}/rpc 200.4.data"  :  "data"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4" *--> "0..1" "POST /v1/wallets/{wallet_id}/rpc 200.4.error"  :  "error"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.5" *--> "1" "POST /v1/wallets/{wallet_id}/rpc 200.5.data"  :  "data"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.6" *--> "1" "POST /v1/wallets/{wallet_id}/rpc 200.6.data"  :  "data"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.7" *--> "1" "POST /v1/wallets/{wallet_id}/rpc 200.7.data"  :  "data"
+
+"POST /v1/wallets/{wallet_id}/rpc 200" --|> "POST /v1/wallets/{wallet_id}/rpc 200"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.1" --|> "POST /v1/wallets/{wallet_id}/rpc 200"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.2" --|> "POST /v1/wallets/{wallet_id}/rpc 200"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.3" --|> "POST /v1/wallets/{wallet_id}/rpc 200"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.4" --|> "POST /v1/wallets/{wallet_id}/rpc 200"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.5" --|> "POST /v1/wallets/{wallet_id}/rpc 200"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.6" --|> "POST /v1/wallets/{wallet_id}/rpc 200"
+
+"POST /v1/wallets/{wallet_id}/rpc 200.7" --|> "POST /v1/wallets/{wallet_id}/rpc 200"
+
+"POST /v1/wallets/{wallet_id}/rpc" ..> "1" "POST /v1/wallets/{wallet_id}/rpc 200"  :  "200"
+
+diamond anon9
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction" -->"0..1" "anon9" : "chain_id"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.chain_id" --|> "anon9"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.chain_id.1" --|> "anon9"
+
+diamond anon10
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction" -->"0..1" "anon10" : "nonce"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.nonce" --|> "anon10"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.nonce.1" --|> "anon10"
+
+diamond anon11
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction" -->"0..1" "anon11" : "value"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.value" --|> "anon11"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.value.1" --|> "anon11"
+
+diamond anon12
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction" -->"0..1" "anon12" : "type"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.type" --|> "anon12"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.type.1" --|> "anon12"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.type.2" --|> "anon12"
+
+diamond anon13
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction" -->"0..1" "anon13" : "gas_limit"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.gas_limit" --|> "anon13"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.gas_limit.1" --|> "anon13"
+
+diamond anon14
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction" -->"0..1" "anon14" : "gas_price"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.gas_price" --|> "anon14"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.gas_price.1" --|> "anon14"
+
+diamond anon15
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction" -->"0..1" "anon15" : "max_fee_per_gas"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.max_fee_per_gas" --|> "anon15"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.max_fee_per_gas.1" --|> "anon15"
+
+diamond anon16
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction" -->"0..1" "anon16" : "max_priority_fee_per_gas"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.max_priority_fee_per_gas" --|> "anon16"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params.transaction.max_priority_fee_per_gas.1" --|> "anon16"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.params" *--> "1" "POST /v1/wallets/{wallet_id}/rpc Request.params.transaction"  :  "transaction"
+
+"POST /v1/wallets/{wallet_id}/rpc Request" *--> "1" "POST /v1/wallets/{wallet_id}/rpc Request.params"  :  "params"
+
+diamond anon17
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction" -->"0..1" "anon17" : "chain_id"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.chain_id" --|> "anon17"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.chain_id.1" --|> "anon17"
+
+diamond anon18
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction" -->"0..1" "anon18" : "nonce"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.nonce" --|> "anon18"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.nonce.1" --|> "anon18"
+
+diamond anon19
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction" -->"0..1" "anon19" : "value"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.value" --|> "anon19"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.value.1" --|> "anon19"
+
+diamond anon20
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction" -->"0..1" "anon20" : "type"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.type" --|> "anon20"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.type.1" --|> "anon20"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.type.2" --|> "anon20"
+
+diamond anon21
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction" -->"0..1" "anon21" : "gas_limit"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.gas_limit" --|> "anon21"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.gas_limit.1" --|> "anon21"
+
+diamond anon22
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction" -->"0..1" "anon22" : "gas_price"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.gas_price" --|> "anon22"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.gas_price.1" --|> "anon22"
+
+diamond anon23
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction" -->"0..1" "anon23" : "max_fee_per_gas"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.max_fee_per_gas" --|> "anon23"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.max_fee_per_gas.1" --|> "anon23"
+
+diamond anon24
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction" -->"0..1" "anon24" : "max_priority_fee_per_gas"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.max_priority_fee_per_gas" --|> "anon24"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction.max_priority_fee_per_gas.1" --|> "anon24"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1.params" *--> "1" "POST /v1/wallets/{wallet_id}/rpc Request.1.params.transaction"  :  "transaction"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1" *--> "1" "POST /v1/wallets/{wallet_id}/rpc Request.1.params"  :  "params"
+
+diamond anon25
+
+"POST /v1/wallets/{wallet_id}/rpc Request.2.params" -->"1" "anon25" : "encoding"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.2.params.encoding" --|> "anon25"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.2.params.encoding.1" --|> "anon25"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.2" *--> "1" "POST /v1/wallets/{wallet_id}/rpc Request.2.params"  :  "params"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.3.params" *--> "1" "POST /v1/wallets/{wallet_id}/rpc Request.3.params.typed_data"  :  "typed_data"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.3" *--> "1" "POST /v1/wallets/{wallet_id}/rpc Request.3.params"  :  "params"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.4" *--> "1" "POST /v1/wallets/{wallet_id}/rpc Request.4.params"  :  "params"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.5" *--> "1" "POST /v1/wallets/{wallet_id}/rpc Request.5.params"  :  "params"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.6" *--> "1" "POST /v1/wallets/{wallet_id}/rpc Request.6.params"  :  "params"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.7" *--> "1" "POST /v1/wallets/{wallet_id}/rpc Request.7.params"  :  "params"
+
+"POST /v1/wallets/{wallet_id}/rpc Request" --|> "POST /v1/wallets/{wallet_id}/rpc Request"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.1" --|> "POST /v1/wallets/{wallet_id}/rpc Request"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.2" --|> "POST /v1/wallets/{wallet_id}/rpc Request"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.3" --|> "POST /v1/wallets/{wallet_id}/rpc Request"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.4" --|> "POST /v1/wallets/{wallet_id}/rpc Request"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.5" --|> "POST /v1/wallets/{wallet_id}/rpc Request"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.6" --|> "POST /v1/wallets/{wallet_id}/rpc Request"
+
+"POST /v1/wallets/{wallet_id}/rpc Request.7" --|> "POST /v1/wallets/{wallet_id}/rpc Request"
+
+"POST /v1/wallets/{wallet_id}/rpc" --> "1" "POST /v1/wallets/{wallet_id}/rpc Request"
+
+"GET /v1/wallets/{wallet_id} 200" --> "1" "Wallet"
+
+"GET /v1/wallets/{wallet_id} 200" --> "1" "GET /v1/wallets/{wallet_id} 200"
+
+"GET /v1/wallets/{wallet_id}" ..> "1" "GET /v1/wallets/{wallet_id} 200"  :  "200"
+
+"PATCH /v1/wallets/{wallet_id} 200" --> "1" "Wallet"
+
+"PATCH /v1/wallets/{wallet_id} 200" --> "1" "PATCH /v1/wallets/{wallet_id} 200"
+
+"PATCH /v1/wallets/{wallet_id}" ..> "1" "PATCH /v1/wallets/{wallet_id} 200"  :  "200"
+
+"PATCH /v1/wallets/{wallet_id} Request" *--> "0..1" "PATCH /v1/wallets/{wallet_id} Request.owner"  :  "owner"
+
+"PATCH /v1/wallets/{wallet_id} Request" --> "*" "PATCH /v1/wallets/{wallet_id} Request.additional_signers"  :  "additional_signers"
+
+"PATCH /v1/wallets/{wallet_id}" --> "1" "PATCH /v1/wallets/{wallet_id} Request"
+
+"POST /v1/wallets/{wallet_id}/raw_sign 200" *--> "0..1" "POST /v1/wallets/{wallet_id}/raw_sign 200.data"  :  "data"
+
+"POST /v1/wallets/{wallet_id}/raw_sign 200" *--> "0..1" "POST /v1/wallets/{wallet_id}/raw_sign 200.error"  :  "error"
+
+"POST /v1/wallets/{wallet_id}/raw_sign" ..> "1" "POST /v1/wallets/{wallet_id}/raw_sign 200"  :  "200"
+
+"POST /v1/wallets/{wallet_id}/raw_sign" --> "1" "POST /v1/wallets/{wallet_id}/raw_sign Request"
+
+"GET /v1/wallets/{wallet_id}/balance 200" --> "*" "GET /v1/wallets/{wallet_id}/balance 200.balances"  :  "balances"
+
+"GET /v1/wallets/{wallet_id}/balance" ..> "1" "GET /v1/wallets/{wallet_id}/balance 200"  :  "200"
+
+diamond anon26
+
+"GET /v1/wallets/{wallet_id}/transactions 200.transactions" -->"1" "anon26" : "details"
+
+"GET /v1/wallets/{wallet_id}/transactions 200.transactions.details" --|> "anon26"
+
+"GET /v1/wallets/{wallet_id}/transactions 200.transactions.details.1" --|> "anon26"
+
+"GET /v1/wallets/{wallet_id}/transactions 200.transactions.details.2" --|> "anon26"
+
+"GET /v1/wallets/{wallet_id}/transactions 200" --> "*" "GET /v1/wallets/{wallet_id}/transactions 200.transactions"  :  "transactions"
+
+"GET /v1/wallets/{wallet_id}/transactions" ..> "1" "GET /v1/wallets/{wallet_id}/transactions 200"  :  "200"
+
+"GET /v1/users 200" --> "*" "User"  :  "data"
+
+"GET /v1/users" ..> "1" "GET /v1/users 200"  :  "200"
+
+"POST /v1/users 200" --> "1" "User"
+
+"POST /v1/users 200" --> "1" "POST /v1/users 200"
+
+"POST /v1/users" ..> "1" "POST /v1/users 200"  :  "200"
+
+"POST /v1/users" --> "1" "POST /v1/users Request"
+
+"GET /v1/users/{user_id} 200" --> "1" "User"
+
+"GET /v1/users/{user_id} 200" --> "1" "GET /v1/users/{user_id} 200"
+
+"GET /v1/users/{user_id}" ..> "1" "GET /v1/users/{user_id} 200"  :  "200"
+
+"DELETE /v1/users/{user_id}" ..> "1" "DELETE /v1/users/{user_id} 204 text/html"  :  "204 text/html"
+
+"DELETE /v1/users/{user_id}" ..> "1" "DELETE /v1/users/{user_id} 404 text/html"  :  "404 text/html"
+
+"POST /v1/users/{user_id}/custom_metadata" ..> "1" "POST /v1/users/{user_id}/custom_metadata 200"  :  "200"
+
+"POST /v1/users/email/address" ..> "1" "User"  :  "200"
+
+"POST /v1/users/email/address" --> "1" "POST /v1/users/email/address Request"
+
+"POST /v1/users/custom_auth/id" ..> "1" "User"  :  "200"
+
+"POST /v1/users/custom_auth/id" --> "1" "POST /v1/users/custom_auth/id Request"
+
+"POST /v1/users/wallet/address" ..> "1" "User"  :  "200"
+
+diamond anon27
+
+"POST /v1/users/wallet/address Request" -->"1" "anon27" : "address"
+
+"POST /v1/users/wallet/address Request.address" --|> "anon27"
+
+"POST /v1/users/wallet/address Request.address.1" --|> "anon27"
+
+"POST /v1/users/wallet/address" --> "1" "POST /v1/users/wallet/address Request"
+
+"POST /v1/users/{user_id}/wallets 200" --> "1" "User"
+
+"POST /v1/users/{user_id}/wallets 200" --> "1" "POST /v1/users/{user_id}/wallets 200"
+
+"POST /v1/users/{user_id}/wallets" ..> "1" "POST /v1/users/{user_id}/wallets 200"  :  "200"
+
+"POST /v1/users/{user_id}/wallets Request.wallets" --> "*" "POST /v1/users/{user_id}/wallets Request.wallets.additional_signers"  :  "additional_signers"
+
+diamond anon28
+
+"POST /v1/users/{user_id}/wallets Request.wallets" -->"1" "anon28" : "chain_type"
+
+"POST /v1/users/{user_id}/wallets Request.wallets.chain_type" --|> "anon28"
+
+"POST /v1/users/{user_id}/wallets Request.wallets.chain_type.1" --|> "anon28"
+
+"POST /v1/users/{user_id}/wallets Request.wallets.chain_type.2" --|> "anon28"
+
+"POST /v1/users/{user_id}/wallets Request.wallets.chain_type.3" --|> "anon28"
+
+"POST /v1/users/{user_id}/wallets Request.wallets.chain_type.4" --|> "anon28"
+
+"POST /v1/users/{user_id}/wallets Request" --> "*" "POST /v1/users/{user_id}/wallets Request.wallets"  :  "wallets"
+
+"POST /v1/users/{user_id}/wallets" --> "1" "POST /v1/users/{user_id}/wallets Request"
+
+"POST /v1/policies 200" --> "1" "Policy"
+
+"POST /v1/policies 200" --> "1" "POST /v1/policies 200"
+
+"POST /v1/policies" ..> "1" "POST /v1/policies 200"  :  "200"
+
+"POST /v1/policies Request" --> "*" "POST /v1/policies Request.rules"  :  "rules"
+
+"POST /v1/policies Request" *--> "0..1" "POST /v1/policies Request.owner"  :  "owner"
+
+"POST /v1/policies" --> "1" "POST /v1/policies Request"
+
+"GET /v1/policies/{policy_id} 200" --> "1" "Policy"
+
+"GET /v1/policies/{policy_id} 200" --> "1" "GET /v1/policies/{policy_id} 200"
+
+"GET /v1/policies/{policy_id}" ..> "1" "GET /v1/policies/{policy_id} 200"  :  "200"
+
+"DELETE /v1/policies/{policy_id}" ..> "1" "Policy"  :  "200"
+
+"PATCH /v1/policies/{policy_id} 200" --> "1" "Policy"
+
+"PATCH /v1/policies/{policy_id} 200" --> "1" "PATCH /v1/policies/{policy_id} 200"
+
+"PATCH /v1/policies/{policy_id}" ..> "1" "PATCH /v1/policies/{policy_id} 200"  :  "200"
+
+"PATCH /v1/policies/{policy_id} Request" --> "*" "PATCH /v1/policies/{policy_id} Request.rules"  :  "rules"
+
+"PATCH /v1/policies/{policy_id} Request" *--> "0..1" "PATCH /v1/policies/{policy_id} Request.owner"  :  "owner"
+
+"PATCH /v1/policies/{policy_id}" --> "1" "PATCH /v1/policies/{policy_id} Request"
+
+"POST /v1/policies/{policy_id}/rules" ..> "1" "POST /v1/policies/{policy_id}/rules 200"  :  "200"
+
+"POST /v1/policies/{policy_id}/rules" --> "1" "POST /v1/policies/{policy_id}/rules Request"
+
+"GET /v1/transactions/{transaction_id} 200" --> "1" "Transaction"
+
+"GET /v1/transactions/{transaction_id} 200" --> "1" "GET /v1/transactions/{transaction_id} 200"
+
+"GET /v1/transactions/{transaction_id}" ..> "1" "GET /v1/transactions/{transaction_id} 200"  :  "200"
+
+"GET /v1/key_quorums/{key_quorum_id} 200" --> "1" "KeyQuorum"
+
+"GET /v1/key_quorums/{key_quorum_id} 200" --> "1" "GET /v1/key_quorums/{key_quorum_id} 200"
+
+"GET /v1/key_quorums/{key_quorum_id}" ..> "1" "GET /v1/key_quorums/{key_quorum_id} 200"  :  "200"
+
+"DELETE /v1/key_quorums/{key_quorum_id}" ..> "1" "KeyQuorum"  :  "200"
+
+"PATCH /v1/key_quorums/{key_quorum_id} 200" --> "1" "KeyQuorum"
+
+"PATCH /v1/key_quorums/{key_quorum_id} 200" --> "1" "PATCH /v1/key_quorums/{key_quorum_id} 200"
+
+"PATCH /v1/key_quorums/{key_quorum_id}" ..> "1" "PATCH /v1/key_quorums/{key_quorum_id} 200"  :  "200"
+
+"PATCH /v1/key_quorums/{key_quorum_id}" --> "1" "PATCH /v1/key_quorums/{key_quorum_id} Request"
+
+"POST /v1/key_quorums 200" --> "1" "KeyQuorum"
+
+"POST /v1/key_quorums 200" --> "1" "POST /v1/key_quorums 200"
+
+"POST /v1/key_quorums" ..> "1" "POST /v1/key_quorums 200"  :  "200"
+
+"POST /v1/key_quorums" --> "1" "POST /v1/key_quorums Request"
+
+"POST /v1/wallets_with_recovery 200" --> "*" "Wallet"  :  "wallets"
+
+"POST /v1/wallets_with_recovery" ..> "1" "POST /v1/wallets_with_recovery 200"  :  "200"
+
+"POST /v1/wallets_with_recovery Request" --> "*" "POST /v1/wallets_with_recovery Request.wallets"  :  "wallets"
+
+"POST /v1/wallets_with_recovery Request" *--> "1" "POST /v1/wallets_with_recovery Request.primary_signer"  :  "primary_signer"
+
+"POST /v1/wallets_with_recovery Request" *--> "1" "POST /v1/wallets_with_recovery Request.recovery_user"  :  "recovery_user"
+
+"POST /v1/wallets_with_recovery" --> "1" "POST /v1/wallets_with_recovery Request"
+
+"POST /v1/user_signers/authenticate 200" *--> "1" "POST /v1/user_signers/authenticate 200.encrypted_authorization_key"  :  "encrypted_authorization_key"
+
+"POST /v1/user_signers/authenticate 200" --> "*" "Wallet"  :  "wallets"
+
+"POST /v1/user_signers/authenticate 200.1" --> "*" "Wallet"  :  "wallets"
+
+"POST /v1/user_signers/authenticate 200" --|> "POST /v1/user_signers/authenticate 200"
+
+"POST /v1/user_signers/authenticate 200.1" --|> "POST /v1/user_signers/authenticate 200"
+
+"POST /v1/user_signers/authenticate" ..> "1" "POST /v1/user_signers/authenticate 200"  :  "200"
+
+"POST /v1/user_signers/authenticate" --> "1" "POST /v1/user_signers/authenticate Request"
+
+"POST /v1/users/{user_id}/fiat/status" ..> "1" "POST /v1/users/{user_id}/fiat/status 200"  :  "200"
+
+"POST /v1/users/{user_id}/fiat/status" --> "1" "POST /v1/users/{user_id}/fiat/status Request"
+
+"POST /v1/users/{user_id}/fiat/tos 200" --|> "POST /v1/users/{user_id}/fiat/tos 200"
+
+"POST /v1/users/{user_id}/fiat/tos 200.1" --|> "POST /v1/users/{user_id}/fiat/tos 200"
+
+"POST /v1/users/{user_id}/fiat/tos" ..> "1" "POST /v1/users/{user_id}/fiat/tos 200"  :  "200"
+
+"POST /v1/users/{user_id}/fiat/tos" --> "1" "POST /v1/users/{user_id}/fiat/tos Request"
+
+"GET /v1/users/{user_id}/fiat/kyc" ..> "1" "GET /v1/users/{user_id}/fiat/kyc 200"  :  "200"
+
+"POST /v1/users/{user_id}/fiat/kyc" ..> "1" "POST /v1/users/{user_id}/fiat/kyc 200"  :  "200"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.data" *--> "1" "POST /v1/users/{user_id}/fiat/kyc Request.data.residential_address"  :  "residential_address"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.data" --> "*" "POST /v1/users/{user_id}/fiat/kyc Request.data.identifying_information"  :  "identifying_information"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.data" *--> "0..1" "POST /v1/users/{user_id}/fiat/kyc Request.data.ofac_screen"  :  "ofac_screen"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.data" *--> "0..1" "POST /v1/users/{user_id}/fiat/kyc Request.data.kyc_screen"  :  "kyc_screen"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.data" *--> "0..1" "POST /v1/users/{user_id}/fiat/kyc Request.data.transliterated_residential_address"  :  "transliterated_residential_address"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.data" --> "*" "POST /v1/users/{user_id}/fiat/kyc Request.data.documents"  :  "documents"
+
+"POST /v1/users/{user_id}/fiat/kyc Request" *--> "1" "POST /v1/users/{user_id}/fiat/kyc Request.data"  :  "data"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.1.data" *--> "1" "POST /v1/users/{user_id}/fiat/kyc Request.1.data.residential_address"  :  "residential_address"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.1.data" --> "*" "POST /v1/users/{user_id}/fiat/kyc Request.1.data.identifying_information"  :  "identifying_information"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.1.data" *--> "0..1" "POST /v1/users/{user_id}/fiat/kyc Request.1.data.ofac_screen"  :  "ofac_screen"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.1.data" *--> "0..1" "POST /v1/users/{user_id}/fiat/kyc Request.1.data.kyc_screen"  :  "kyc_screen"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.1.data" *--> "0..1" "POST /v1/users/{user_id}/fiat/kyc Request.1.data.transliterated_residential_address"  :  "transliterated_residential_address"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.1.data" --> "*" "POST /v1/users/{user_id}/fiat/kyc Request.1.data.documents"  :  "documents"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.1" *--> "1" "POST /v1/users/{user_id}/fiat/kyc Request.1.data"  :  "data"
+
+"POST /v1/users/{user_id}/fiat/kyc Request" --|> "POST /v1/users/{user_id}/fiat/kyc Request"
+
+"POST /v1/users/{user_id}/fiat/kyc Request.1" --|> "POST /v1/users/{user_id}/fiat/kyc Request"
+
+"POST /v1/users/{user_id}/fiat/kyc" --> "1" "POST /v1/users/{user_id}/fiat/kyc Request"
+
+"PATCH /v1/users/{user_id}/fiat/kyc" ..> "1" "PATCH /v1/users/{user_id}/fiat/kyc 200"  :  "200"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.data" *--> "1" "PATCH /v1/users/{user_id}/fiat/kyc Request.data.residential_address"  :  "residential_address"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.data" --> "*" "PATCH /v1/users/{user_id}/fiat/kyc Request.data.identifying_information"  :  "identifying_information"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.data" *--> "0..1" "PATCH /v1/users/{user_id}/fiat/kyc Request.data.ofac_screen"  :  "ofac_screen"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.data" *--> "0..1" "PATCH /v1/users/{user_id}/fiat/kyc Request.data.kyc_screen"  :  "kyc_screen"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.data" *--> "0..1" "PATCH /v1/users/{user_id}/fiat/kyc Request.data.transliterated_residential_address"  :  "transliterated_residential_address"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.data" --> "*" "PATCH /v1/users/{user_id}/fiat/kyc Request.data.documents"  :  "documents"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request" *--> "1" "PATCH /v1/users/{user_id}/fiat/kyc Request.data"  :  "data"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.1.data" *--> "1" "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data.residential_address"  :  "residential_address"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.1.data" --> "*" "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data.identifying_information"  :  "identifying_information"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.1.data" *--> "0..1" "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data.ofac_screen"  :  "ofac_screen"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.1.data" *--> "0..1" "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data.kyc_screen"  :  "kyc_screen"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.1.data" *--> "0..1" "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data.transliterated_residential_address"  :  "transliterated_residential_address"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.1.data" --> "*" "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data.documents"  :  "documents"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.1" *--> "1" "PATCH /v1/users/{user_id}/fiat/kyc Request.1.data"  :  "data"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request" --|> "PATCH /v1/users/{user_id}/fiat/kyc Request"
+
+"PATCH /v1/users/{user_id}/fiat/kyc Request.1" --|> "PATCH /v1/users/{user_id}/fiat/kyc Request"
+
+"PATCH /v1/users/{user_id}/fiat/kyc" --> "1" "PATCH /v1/users/{user_id}/fiat/kyc Request"
+
+"POST /v1/users/{user_id}/fiat/kyc_link 200" --> "*" "POST /v1/users/{user_id}/fiat/kyc_link 200.rejection_reasons"  :  "rejection_reasons"
+
+"POST /v1/users/{user_id}/fiat/kyc_link" ..> "1" "POST /v1/users/{user_id}/fiat/kyc_link 200"  :  "200"
+
+"POST /v1/users/{user_id}/fiat/kyc_link" --> "1" "POST /v1/users/{user_id}/fiat/kyc_link Request"
+
+"GET /v1/users/{user_id}/fiat/accounts 200" --> "*" "GET /v1/users/{user_id}/fiat/accounts 200.accounts"  :  "accounts"
+
+"GET /v1/users/{user_id}/fiat/accounts" ..> "1" "GET /v1/users/{user_id}/fiat/accounts 200"  :  "200"
+
+"POST /v1/users/{user_id}/fiat/accounts" ..> "1" "POST /v1/users/{user_id}/fiat/accounts 200"  :  "200"
+
+"POST /v1/users/{user_id}/fiat/accounts Request" *--> "0..1" "POST /v1/users/{user_id}/fiat/accounts Request.iban"  :  "iban"
+
+"POST /v1/users/{user_id}/fiat/accounts Request" *--> "0..1" "POST /v1/users/{user_id}/fiat/accounts Request.account"  :  "account"
+
+"POST /v1/users/{user_id}/fiat/accounts Request.swift" *--> "1" "POST /v1/users/{user_id}/fiat/accounts Request.swift.address"  :  "address"
+
+"POST /v1/users/{user_id}/fiat/accounts Request.swift" *--> "1" "POST /v1/users/{user_id}/fiat/accounts Request.swift.account"  :  "account"
+
+"POST /v1/users/{user_id}/fiat/accounts Request" *--> "0..1" "POST /v1/users/{user_id}/fiat/accounts Request.swift"  :  "swift"
+
+"POST /v1/users/{user_id}/fiat/accounts Request" *--> "0..1" "POST /v1/users/{user_id}/fiat/accounts Request.address"  :  "address"
+
+"POST /v1/users/{user_id}/fiat/accounts" --> "1" "POST /v1/users/{user_id}/fiat/accounts Request"
+
+"POST /v1/users/{user_id}/fiat/offramp 200" *--> "1" "POST /v1/users/{user_id}/fiat/offramp 200.deposit_instructions"  :  "deposit_instructions"
+
+"POST /v1/users/{user_id}/fiat/offramp" ..> "1" "POST /v1/users/{user_id}/fiat/offramp 200"  :  "200"
+
+"POST /v1/users/{user_id}/fiat/offramp Request" *--> "1" "POST /v1/users/{user_id}/fiat/offramp Request.source"  :  "source"
+
+"POST /v1/users/{user_id}/fiat/offramp Request" *--> "1" "POST /v1/users/{user_id}/fiat/offramp Request.destination"  :  "destination"
+
+"POST /v1/users/{user_id}/fiat/offramp" --> "1" "POST /v1/users/{user_id}/fiat/offramp Request"
+
+"POST /v1/users/{user_id}/fiat/onramp 200" *--> "1" "POST /v1/users/{user_id}/fiat/onramp 200.deposit_instructions"  :  "deposit_instructions"
+
+"POST /v1/users/{user_id}/fiat/onramp" ..> "1" "POST /v1/users/{user_id}/fiat/onramp 200"  :  "200"
+
+"POST /v1/users/{user_id}/fiat/onramp Request" *--> "1" "POST /v1/users/{user_id}/fiat/onramp Request.source"  :  "source"
+
+"POST /v1/users/{user_id}/fiat/onramp Request" *--> "1" "POST /v1/users/{user_id}/fiat/onramp Request.destination"  :  "destination"
+
+"POST /v1/users/{user_id}/fiat/onramp" --> "1" "POST /v1/users/{user_id}/fiat/onramp Request"
+
+"POST /v1/apps/{app_id}/fiat" ..> "1" "POST /v1/apps/{app_id}/fiat 200"  :  "200"
+
+"POST /v1/apps/{app_id}/fiat" --> "1" "POST /v1/apps/{app_id}/fiat Request"
+
+@enduml
