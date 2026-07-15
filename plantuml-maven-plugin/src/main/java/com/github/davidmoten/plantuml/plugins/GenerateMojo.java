@@ -127,6 +127,7 @@ public final class GenerateMojo extends AbstractMojo {
                             outDir = outputDirectory;
                         }
                         final SourceFileReaderExt reader = new SourceFileReaderExt( //
+                                false,
                                 Defines.createEmpty(), //
                                 file, //
                                 outDir, //
@@ -192,7 +193,7 @@ public final class GenerateMojo extends AbstractMojo {
     private void extractPreproc(SourceFileReaderExt sourceFileReader) throws IOException {
         for (BlockUml blockUml : sourceFileReader.getBlocks()) {
             final SuggestedFile suggested = sourceFileReader.extractSuggestedFile(blockUml)
-                    .withPreprocFormat();
+                    .withPreprocFormat(FileFormat.PREPROC);
             final SFile file = suggested.getFile(0);
             getLog().info("exporting preprocessing source to " + file.getPrintablePath());
             try (final PrintWriter pw = file.createPrintWriter(charset)) {
