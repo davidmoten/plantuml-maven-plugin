@@ -4,6 +4,8 @@
 
 A [maven](http://maven.apache.org/) plugin that generates UML diagrams from [PlantUML](http://plantuml.sourceforge.net/) files (text files).
 
+Requires JDK 11+. You can still use JDK 8 if you override the plantuml dependency to 2025.8.
+
 **Status**: *released to Maven Central*
 
 ## Usage
