@@ -1,6 +1,6 @@
 # plantuml-maven-plugin 
 <a href="https://github.com/davidmoten/plantuml-maven-plugin/actions/workflows/ci.yml"><img src="https://github.com/davidmoten/plantuml-maven-plugin/actions/workflows/ci.yml/badge.svg"/></a><br/>
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.davidmoten/plantuml-maven-plugin/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/com.github.davidmoten/plantuml-maven-plugin)<br/>
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.davidmoten/plantuml-maven-plugin)](https://central.sonatype.com/artifact/com.github.davidmoten/plantuml-maven-plugin)<br/>
 
 A [maven](http://maven.apache.org/) plugin that generates UML diagrams from [PlantUML](http://plantuml.sourceforge.net/) files (text files).
 
